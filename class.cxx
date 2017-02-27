@@ -1,9 +1,9 @@
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
-
+#include<cstdio>
 using namespace std;
-
+//user//
 
 
 
@@ -17,9 +17,11 @@ class Stack{
 	unsigned int push(double value);
 	unsigned int pop(double* location);
 	unsigned int empty();
+	unsigned char Broke();
+	void dump(FILE* f);
 	int Capacity();
 	int getsize();
-	int verifypoint(int*p);
+	int verifypoint(void*p);
 	Stack(int capacity);
 	~Stack();
 };
@@ -63,26 +65,49 @@ int Stack :: getsize() {
 	Stack :: ~ Stack(){
 		free(data_);
 	}
+unsigned char Stack :: Broke() {
+	char  f = 0;
+	 f = (f + !verifypoint(data_) + (size_ > capacity_)*2 +(capacity_ <= 0)*4);
+	return f;
+}
 
-int Stack :: verifypoint(int* p){
+int Stack :: verifypoint(void* p){
 	int f;
 	f = (p == NULL);
 	return !f;
 }
 void  checkerrors(int errornum) {
 
-        	switch(errornum){
-		case 1:cout<<"Stack is full of items"<<endl;
+        	switch(errornum){	
+		case 1:cout<<"Stack is full of items"<<endl;//
 		break;
-		case 2:cout<<"No value<<endl";
+		case 2:cout<<"No value"<<endl;
 		break;
 		case 3:cout<<"Stack is empty"<<endl;
 		break;
  		case 4:cout<<"No adress"<<endl;
 		break;
-		default:cout<<"No problem"<<endl;
+		default:cout<<"No problem"<<endl;	
 		break;
+	
 		}
+}
+void Stack::dump(FILE* f){
+	unsigned char err;
+	err = Broke();
+	fprintf(f, "Stack object at <%p>:\n", this);
+	fprintf(f, "\t valid:\t");
+	if(!err){
+		fprintf(f,"No problem\n");
+	} else {
+		fprintf(f, "[err %d]\n", err);
+	}
+	
+	fprintf(f, "\t Data pointer:\t<%p>\n", data_);
+	fprintf(f, "\t Capacity:\t%d\n", capacity_);
+	fprintf(f, "\t Size:\t\t%d\n", size_);
+	
+	
 }
 void test(Stack* stack){
 	int k;
@@ -92,6 +117,7 @@ void test(Stack* stack){
 	}
 	for(k = 0;k <= 30;k++) {
 		checkerrors(stack->pop(&j));
+		cout<<j<<endl;
 	}
 }
 int main(int argc,char** argv){
@@ -100,5 +126,6 @@ int main(int argc,char** argv){
 	stack.getsize();
 	stack.Capacity();
 	stack.empty();
+	stack.dump(stdout);
 	return 0;
 }
