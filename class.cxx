@@ -3,7 +3,7 @@
 #include<cassert>
 #include<cstdio>
 using namespace std;
-//user//
+
 
 
 
@@ -79,15 +79,15 @@ int Stack :: verifypoint(void* p){
 void  checkerrors(int errornum) {
 
         	switch(errornum){	
-		case 1:cout<<"Stack is full of items"<<endl;//
+		case 1:printf("Stack is full of items\n");
 		break;
-		case 2:cout<<"No value"<<endl;
+		case 2:printf("No value\n");
 		break;
-		case 3:cout<<"Stack is empty"<<endl;
+		case 3:printf("Stack is empty\n");
 		break;
- 		case 4:cout<<"No adress"<<endl;
+ 		case 4:printf("No adress\n");
 		break;
-		default:cout<<"No problem"<<endl;	
+		default:printf("No problem\n");
 		break;
 	
 		}
@@ -117,9 +117,13 @@ void test(Stack* stack){
 	}
 	for(k = 0;k <= 30;k++) {
 		checkerrors(stack->pop(&j));
-		cout<<j<<endl;
+		printf("%f\n",j);
 	}
+
 }
+
+//class Newfunctions {
+	
 int main(int argc,char** argv){
 	Stack stack(30);
 	test(&stack);
