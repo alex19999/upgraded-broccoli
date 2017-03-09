@@ -5,7 +5,7 @@
 #include<cstring>
 using namespace std;
 
-#define F_MAXLINE 6
+#define F_MAXLINE 9
 #define ARG_MAXLINE 10
 
 #define NOCOMMAND 0x00
@@ -25,14 +25,10 @@ using namespace std;
 #define cx 0x03
 #define dx 0x04
 
-#define reg_code 0x01
-#define add_code 0x02
-#define adres_prepositon 'h' 
+#define r_code 0x01
+#define a_code 0x02
+#define a_prep 'h' 
 
-/*
-	prog := statement+
-	statement := op x y z
-*/
 int convent_arg(FILE* f1,FILE* f2) {
         char par;
         char* arg;
@@ -82,32 +78,32 @@ int convent_arg(FILE* f1,FILE* f2) {
                 }
         if(f == 3) {
                 sscanf(arg,"%lf",&dval);
-                fwrite(&dval,sizeof(double),1,f2);
+		fwrite(&dval,sizeof(double),1,f2);
                 return 1;
                 }
         if(!strcmp(arg,"ax")) {
-	        fwrite(arg,sizeof(char),2,f2);
-               // fwrite("reg_code",sizeof(char),7,f2);
+	        fwrite(arg,sizeof(char),1,f2);
+  		fputc(r_code,f2);
                 return 1;
                 }
         if(!strcmp(arg,"bx")) {
-                fwrite(arg,sizeof(char),2,f2);
-               // fwrite("reg_code",sizeof(char),7,f2);
+                fwrite(arg,sizeof(char),1,f2);
+    		fputc(r_code,f2);
                 return 1;
                 }
         if(!strcmp(arg,"cx")) {
-                fwrite(arg,sizeof(char),2,f2);
-               // fwrite("reg_code",sizeof(char),7,f2);
+                fwrite(arg,sizeof(char),1,f2);
+              	fputc(r_code,f2);
                 return 1;
                 }
         if(!strcmp(arg,"dx")) {
-                fwrite(arg,sizeof(char),2,f2);
-               // fwrite("reg_code",sizeof(char),8,f2);
+                fwrite(arg,sizeof(char),1,f2);
+        	fputc(r_code,f2);
                 return 1;
                 }
         if(arg[0] = 'h') {
                 sscanf(&arg[1],"%d",&val);
-              //  fwrite("add_code",sizeof(char),8,f2);
+            	fputc(a_code,f2);
                 fwrite(&par,sizeof(int),1,f2);
                 }
         if(!strcmp(arg,"")) {
@@ -121,8 +117,7 @@ unsigned int conventer(FILE* f1,FILE* f2) {
 	char k;
 	char* s;                                               //our function//
 	s = (char*)calloc(F_MAXLINE,sizeof(char));
-	f1 = fopen("text1.txt","r");
-	f2 = fopen("text2.txt","wb");
+
 	k = fgetc(f1);
 	int i = 0;
 	while (s != " " && s != "\n" && s != "\t") {	
@@ -132,7 +127,7 @@ unsigned int conventer(FILE* f1,FILE* f2) {
 			s[i++] = k;
 			k = fgetc(f1);
 		}
-	
+}	
 	
 		if(!strcmp(s,"PUSH")) {
 			fwrite(s,sizeof(char),4,f2);
@@ -189,18 +184,20 @@ unsigned int conventer(FILE* f1,FILE* f2) {
 				}
 		
 			
-		}
+		
 
 }						
 
 int main(int argc, char **argv) {
 	FILE* f1;
 	FILE* f2;
+	printf("hello,world\n");
 	char* name_in;
 	char* name_out;
 	int f = 1;
 	name_in = "f_in.txt";
 	name_out = "f_out.txt";
+	printf("hello,world\n");
 	switch(argc-1) {
 		case 1:
 			name_in = argv[1];
@@ -214,10 +211,13 @@ int main(int argc, char **argv) {
 			return 1;
 			
 	}
+	printf("hello,world\n");
 	f1 = fopen(name_in,"r");
-	f2 = fopen(name_out,"wb+");
+	f2 = fopen(name_out,"wb+");	
+	printf("ok\n");
 	while(f){
 		f = conventer(f1, f2);
+		printf("ok\n");
 	}
 	return 0;
 }
