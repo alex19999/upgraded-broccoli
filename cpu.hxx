@@ -5,12 +5,13 @@
 #include<cstdlib>
 #include<cassert>
 #include<iostream>
-
+#include"stack.hxx"
 
 #define F_MAXLINE 6
 #define ARG_MAXLINE 10
 #define RAM_SIZE 128
-
+#define STACK_SIZE 8
+#define CALLSTACK_SIZE 16
 #define NOCOMMAND 0x00
 #define PUSH 0x10
 #define POP 0x11
@@ -20,14 +21,14 @@
 #define DIV 0x23
 #define OUT 0x01             
 #define IN 0x02
-#define POPAX 0x1a
-#define PUSHAX 0x1b
+#define POP_REG 0x1a
+#define PUSH_REG 0x1b
 
-#define eax 0x01
-#define ebx 0x02
-#define ecx 0x03
-#define edx 0x04
-#define eip 0x05
+#define R_eax 0x01
+#define R_ebx 0x02
+#define R_ecx 0x03
+#define R_edx 0x04
+#define R_eip 0x05
 
 #define reg_codeI 0x01
 #define reg_codeD 0x02
@@ -43,43 +44,43 @@
 union reg {
 	int i;
 	double d;
-}
+};
 
 class Ram {
 	private:
 	void* data_;
-	unsigned int size_
-	unsigned int capacity_;
 	public:
-	int read_regI(unsigned int code);
-	double read_regD(unsigned int code);
 	int Read_I(unsigned int addr);
 	double Read_D(unsigned int addr);
 	char Read_C(unsigned int addr);
 	int Write_I(unsigned int addr);
 	int Write_D(unsigned int addr);
 	int Write_C(unsigned int addr);
-	void write_regI(unsigned int code);
-	void write_regD(unsigned int code);
 	void entry(FILE* f_in);
 	Ram(unsigned int capacity);
 	~Ram();
-	}
+	};
 
 
 class cpu {
+	public:
+	Stack stack;
+	Stack callstack;
 	private:
 	reg eax;
 	reg ebx;
 	reg ecx;
 	reg edx;
+	reg eip;
 	double* data_;
-	unsigned int size_;
-	unsigned int capacity_;
+	int read_regI(unsigned int code);
+        double read_regD(unsigned int code);
+        void write_regI(unsigned int code,int element);
+        void write_regD(unsigned int code,double element);
 	Ram ram;
-	Stack stack;
 	void push_reg_all(unsigned int code);
 	int read_arg(void* data);
+	int write_arg(void* data);
 	void push_reg();
 	void pop_reg();
 	void add();
@@ -87,9 +88,9 @@ class cpu {
 	void sub();
 	void div();
 	void in();
-	void out();
-	cpu(unsigned int capacity);
-	~cpu;
-}
+	double out();
+	cpu();
+	~cpu();
+};
 
 #endif /* _CPU_H_ */
