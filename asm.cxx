@@ -130,50 +130,50 @@ unsigned int conventer(FILE* f1,FILE* f2) {
 }	
 	
 		if(!strcmp(s,"PUSH")) {
-			fwrite(s,sizeof(char),4,f2);
+			fwrite(s,sizeof(char),1,f2);
 			return convent_arg(f1,f2);
 			
 	        } else  if (!strcmp(s,"POP")) {
-				fwrite(s,sizeof(char),3,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return convent_arg(f1,f2);
 
 		} else  if(!strcmp(s,"ADD")) {
-				fwrite(s,sizeof(char),3,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return 1;
 			
 
 		} else 	if(!strcmp(s,"SUB")) {
-				fwrite(s,sizeof(char),3,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return 1;
 						
 			
 		} else if(!strcmp(s,"MUL")) {
-				fwrite(s,sizeof(char),3,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return 1;
 			
 
  		} else if(!strcmp(s,"DIV")) {
-				fwrite(s,sizeof(char),3,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return 1;
 		
 			
 		} else if(!strcmp(s,"OUT")) {
-				fwrite(s,sizeof(char),3,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return 1;
 			
 
   		} else 	if(!strcmp(s,"IN")) {
-				fwrite(s,sizeof(char),2,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return 1;
 			
 
 		} else if(!strcmp(s,"POPAX")) {
-				fwrite(s,sizeof(char),5,f2);
+				fwrite(s,sizeof(char),1,f2);
                 		return convent_arg(f1,f2);
 			
 
 		} else if(!strcmp(s,"PUSHAX")) {
-                        	fwrite(s,sizeof(char),6,f2);
+                        	fwrite(s,sizeof(char),1,f2);
                         	return convent_arg(f1,f2);
 			
 
