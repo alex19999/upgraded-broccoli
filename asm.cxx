@@ -3,6 +3,7 @@
 #include<iostream>
 #include<cstdio>
 #include<cstring>
+#include<malloc.h>
 using namespace std;
 
 #define F_MAXLINE 9
@@ -23,6 +24,7 @@ using namespace std;
 #define ax 0x01
 #define bx 0x02
 #define cx 0x03
+
 #define dx 0x04
 
 #define r_code 0x01
@@ -30,7 +32,7 @@ using namespace std;
 #define a_prep 'h' 
 
 int convent_arg(FILE* f1,FILE* f2) {
-        char par;
+       	char par;
         char* arg;
         arg = (char*)calloc(ARG_MAXLINE,sizeof(char));
 	int i = 0;
@@ -39,7 +41,8 @@ int convent_arg(FILE* f1,FILE* f2) {
         int val;
 	
         double dval;
-	
+
+	fprintf(stderr,"START CONVERT\n");	
         while(par && !isspace(par)) {
         if(i >= ARG_MAXLINE) {
                 fprintf(stderr,"TOO LONG ARGUMENT%s\n",arg);
@@ -82,22 +85,22 @@ int convent_arg(FILE* f1,FILE* f2) {
                 return 1;
                 }
         if(!strcmp(arg,"ax")) {
-	        fwrite(arg,sizeof(char),1,f2);
+	        fputc(ax,f2);
   		fputc(r_code,f2);
                 return 1;
                 }
         if(!strcmp(arg,"bx")) {
-                fwrite(arg,sizeof(char),1,f2);
+                fputc(bx,f2);
     		fputc(r_code,f2);
                 return 1;
                 }
         if(!strcmp(arg,"cx")) {
-                fwrite(arg,sizeof(char),1,f2);
+                fputc(cx,f2);
               	fputc(r_code,f2);
                 return 1;
                 }
         if(!strcmp(arg,"dx")) {
-                fwrite(arg,sizeof(char),1,f2);
+                fputc(dx,f2);
         	fputc(r_code,f2);
                 return 1;
                 }
@@ -111,93 +114,102 @@ int convent_arg(FILE* f1,FILE* f2) {
                 return 0;
                 }
         }
+/*	fclose(f1);
+        fclose(f2); */
 }
 
 unsigned int conventer(FILE* f1,FILE* f2) {
-	char k;
-	char* s;                                               //our function//
-	s = (char*)calloc(F_MAXLINE,sizeof(char));
-
-	k = fgetc(f1);
+	
+	char k ;
+	char* s;  
+      	s = (char*)calloc(F_MAXLINE,sizeof(char));
+	
 	int i = 0;
-	while (s != " " && s != "\n" && s != "\t") {	
+	k = fgetc(f1);
+	
+	fprintf(stderr, "Reading sym %d\n", k);
+	while (k && !isspace(k) && k!= EOF) {	
 		if (i >=F_MAXLINE) {
 			fprintf(stderr,"Too long word %s\n",s);
-		} else {
+		} 
 			s[i++] = k;
 			k = fgetc(f1);
-		}
-}	
+			fprintf(stderr, "Reading sym %d\n", k);
+		
+	}	
 	
-		if(!strcmp(s,"PUSH")) {
-			fwrite(s,sizeof(char),1,f2);
+	if(!strcmp(s,"PUSH ")) {
+		fputc(PUSH, f2);
+		return convent_arg(f1,f2);
+		fwrite(s,sizeof(char),5,f2);
+		printf("we continue\n");
+	} else  if (!strcmp(s,"POP ")) {
+			fputc(POP,f2);
 			return convent_arg(f1,f2);
-			
-	        } else  if (!strcmp(s,"POP")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return convent_arg(f1,f2);
 
-		} else  if(!strcmp(s,"ADD")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return 1;
-			
-
-		} else 	if(!strcmp(s,"SUB")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return 1;
-						
-			
-		} else if(!strcmp(s,"MUL")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return 1;
-			
-
- 		} else if(!strcmp(s,"DIV")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return 1;
-		
-			
-		} else if(!strcmp(s,"OUT")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return 1;
-			
-
-  		} else 	if(!strcmp(s,"IN")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return 1;
-			
-
-		} else if(!strcmp(s,"POPAX")) {
-				fwrite(s,sizeof(char),1,f2);
-                		return convent_arg(f1,f2);
-			
-
-		} else if(!strcmp(s,"PUSHAX")) {
-                        	fwrite(s,sizeof(char),1,f2);
-                        	return convent_arg(f1,f2);
-			
-
-			
-		} else if(!strcmp(s,"")) {
-				fprintf(stdout,"That's all\n");
-				return 0;
-				}
-		
-			
+	} else  if(!strcmp(s,"ADD")) {
+			fputc(ADD,f2);
+			return 1;
 		
 
+	} else 	if(!strcmp(s,"SUB")) {
+			fputc(SUB,f2);
+			return 1;
+					
+		
+	} else if(!strcmp(s,"MUL")) {
+			fputc(MUL,f2);
+			return 1;
+		
+
+	} else if(!strcmp(s,"DIV")) {
+			fputc(DIV,f2);
+			return 1;
+	
+		
+	} else if(!strcmp(s,"OUT")) {
+			fputc(OUT,f2);
+			return 1;
+		
+
+	} else 	if(!strcmp(s,"IN")) {
+			fputc(IN,f2);
+			return 1;
+		
+
+	} else if(!strcmp(s,"POPAX")) {
+			fputc(POPAX,f2);
+			return convent_arg(f1,f2);
+		
+
+	} else if(!strcmp(s,"PUSHAX")) {
+			fputc(PUSHAX,f2);
+			return convent_arg(f1,f2);
+		
+
+		
+	} else if(!strcmp(s,"")) {
+			fprintf(stdout,"That's all\n");
+			return 0;
+			}
+	
+		
+		
+  	fclose(f1);
+	fclose(f2); 
 }						
 
 int main(int argc, char **argv) {
-	FILE* f1;
-	FILE* f2;
-	printf("hello,world\n");
+	FILE* f1 = NULL;
+		
+	FILE* f2 = NULL;
+	
 	char* name_in;
 	char* name_out;
 	int f = 1;
 	name_in = "f_in.txt";
 	name_out = "f_out.txt";
-	printf("hello,world\n");
+	
 	switch(argc-1) {
 		case 1:
 			name_in = argv[1];
@@ -211,14 +223,21 @@ int main(int argc, char **argv) {
 			return 1;
 			
 	}
-	printf("hello,world\n");
+	
 	f1 = fopen(name_in,"r");
 	f2 = fopen(name_out,"wb+");	
-	printf("ok\n");
+	printf("%p\n%s\n", f1, name_in);
+
+	
+	printf("%d\n",f);
+	
 	while(f){
+		
 		f = conventer(f1, f2);
-		printf("ok\n");
+		
 	}
+	fclose(f1);
+//	fclose(f2);
 	return 0;
 }
 
