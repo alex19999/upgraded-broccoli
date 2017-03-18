@@ -23,6 +23,16 @@
 #define IN 0x02
 #define POP_REG 0x1a
 #define PUSH_REG 0x1b
+#define PUSH_REG_ALL 0x1c
+#define JMP 0x31
+#define JA  0x32
+#define JAE 0x33
+#define JB  0x34
+#define JBE 0x35
+#define JE  0x36
+#define JHE 0x37
+#define CALL 0x38
+#define RET 0x39
 
 #define R_eax 0x01
 #define R_ebx 0x02
@@ -78,7 +88,7 @@ class cpu {
         void write_regI(unsigned int code,int element);
         void write_regD(unsigned int code,double element);
 	Ram ram;
-	void push_reg_all(unsigned int code);
+	void push_reg_all();
 	int read_arg(void* data);
 	int write_arg(void* data);
 	void push_reg();
@@ -89,6 +99,16 @@ class cpu {
 	void div();
 	void in();
 	double out();
+	void jmp();
+	void ja();
+	void jae();
+	void jb();
+	void jbe();
+	void je();
+	void jhe();
+	void call();
+	void ret();
+	void qualifier();
 	cpu();
 	~cpu();
 };

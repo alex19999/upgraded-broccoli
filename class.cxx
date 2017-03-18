@@ -123,7 +123,7 @@ void test(Stack* stack){
 }
 
 //class Newfunctions {
-	
+/*	
 int main(int argc,char** argv){
 	Stack stack(30);
 	test(&stack);
@@ -133,3 +133,4 @@ int main(int argc,char** argv){
 	stack.dump(stdout);
 	return 0;
 }
+*/

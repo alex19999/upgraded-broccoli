@@ -262,7 +262,8 @@ void cpu :: write_regD(unsigned int code,double element) {
         } else fprintf(stderr,"we have not a register in this %d code 4\n",code);
 }
 
-void cpu :: push_reg_all(unsigned int code) {
+void cpu :: push_reg_all() {
+		unsigned int code;
 		if(code && code >= 0x01 && code <= 0x04) {
 			checkerrors(stack.push((double)read_regI(code)));
 			checkerrors(stack.push(read_regD(code)));
@@ -304,6 +305,7 @@ int cpu ::   read_arg(void* data) {
 		
 		default :
 		fprintf(stderr,"Unknown argument\n",code);
+		return 0;
 	}
 }
 
@@ -366,6 +368,130 @@ void cpu :: pop_reg() {
 		}
 	else checkerrors(stack.pop((double*)data));
 }
-	
-//void cpu :: jmp() {
 
+void cpu :: jmp() {
+	int res_;
+	void* data;
+	data = calloc(1,sizeof(double));
+	res_ = read_arg(data);
+	if(res_ == 1) {
+		eip.i = *((int*)data);
+	} else { 
+		eip.i = (int)(*((double*)data));		
+ 	}
+}
+
+
+void cpu :: ja() {
+	double val;
+	if(val > 0) {
+		jmp();
+	}
+}
+
+void cpu :: jae() {
+        double val;                                                                             
+        if(val >= 0) {                                                                           
+                jmp();                                                                          
+        }
+}                
+
+void cpu :: jb() {
+        double val;                                                                             
+        if(val < 0) {                                                                           
+                jmp();                                                                          
+        }
+}               
+
+void cpu :: jbe() {
+        double val;                                                                             
+        if(val <= 0) {                                                                           
+                jmp();                                                                          
+        }
+}                
+void cpu :: je() {
+        double val;                                                                             
+        if(val == 0) {                                                                           
+                jmp();                                                                          
+        }
+}                                                                                          
+void cpu :: jhe() {
+        double val;                                                                             
+        if(val != 0) {                                                                           
+                jmp();                                                                          
+        }
+}
+
+void cpu :: call() {
+	eip.d = eip.d + 1;
+	checkerrors(stack.push(eip.d));
+	jmp();
+}
+
+void cpu :: ret() {
+	stack.pop(&eip.d);
+}	                             
+
+void cpu :: qualifier() {
+	char code;
+	code = ram.Read_C((unsigned int)(eip.i+1));
+	switch(code) {
+		case ADD :
+			add();
+			break;
+		case MUL : 
+			mul();
+			break;
+ 		case SUB :
+			sub();
+			break;
+		case DIV :
+			div();
+			break;
+		case IN :
+			in();
+			break;
+		case OUT :
+			out();
+			break;
+		case PUSH_REG :
+			push_reg();
+			break;
+		case POP_REG :
+			pop_reg();
+			break;
+		case PUSH_REG_ALL :
+			push_reg_all();
+			break;
+		case JMP :
+			jmp();
+			break;
+		case JA :
+			ja();
+			break;
+		case JAE :
+			jae();
+			break;
+		case JB :
+			jb();
+			break;
+		case JBE :
+			jbe();
+			break;
+		case JE :
+			je();
+			break;
+		case JHE :
+			jhe();
+			break;
+		case CALL :
+			call();
+			break;
+		case RET :
+			ret();
+			break;
+		default :
+			fprintf(stderr,"Unknown function\n",code);
+			break;
+		}
+}
