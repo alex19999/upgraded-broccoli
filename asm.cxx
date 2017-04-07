@@ -4,32 +4,57 @@
 #include<cstdio>
 #include<cstring>
 #include<malloc.h>
+
+
 using namespace std;
+
 
 #define F_MAXLINE 9
 #define ARG_MAXLINE 10
 
-#define NOCOMMAND 0x00
-#define PUSH 0x10
-#define POP 0x11
-#define ADD 0x20
-#define MUL 0x21
-#define SUB 0x22
-#define DIV 0x23
-#define OUT 0x01             
-#define IN 0x02
-#define POPAX 0x1a
-#define PUSHAX 0x1b
+#define NOCOMMAND 0
+#define PUSH 1
+#define POP 2
+#define ADD 3
+#define mul 4
+#define SUB 5
+#define DIV 6
+#define OUT 7           
+#define IN 8
+#define POPR 9
+#define PUSHAX 10
+#define JMP 11                                                                              
+#define JA  12                                                                               
+#define JAE 13                                                                              
+#define JB  14                                                                              
+#define JBE 15                                                                               
+#define JE  17                                                                               
+#define JHE 18                                                                              
+#define CALL 19                                                                              
+#define RET 20       
+#define FREEE 16
 
-#define ax 0x01
-#define bx 0x02
-#define cx 0x03
+#define R_eax 21
+#define R_ebx 22
+#define R_ecx 23
+#define R_edx 24
+#define R_eip 25
+#define R_ebp 26
+#define R_esp 27
 
-#define dx 0x04
+#define r_code 1
+#define a_code 2
+#define num_i 3
+#define num_d 4
 
-#define r_code 0x01
-#define a_code 0x02
 #define a_prep 'h' 
+
+typedef struct _table {
+	char* oper;
+	int addr;
+} table;
+
+
 
 int convent_arg(FILE* f1,FILE* f2) {
        	char par;
@@ -43,11 +68,11 @@ int convent_arg(FILE* f1,FILE* f2) {
         double dval;
 
 	fprintf(stderr,"START CONVERT\n");	
-        while(par && !isspace(par)) {
+        while(par && !isspace(par) && par != EOF) {
         if(i >= ARG_MAXLINE) {
                 fprintf(stderr,"TOO LONG ARGUMENT%s\n",arg);
                 return 0;
-        } else {
+        } 
                 arg[i++] = par;
                 if(isdigit(par)) {
                         if(f == 2) {
@@ -77,6 +102,7 @@ int convent_arg(FILE* f1,FILE* f2) {
         if (f == 1) {
                 sscanf(arg,"%d",&val);
                 fwrite(&val,sizeof(int),1,f2);
+		fprintf(stderr,"DANIK PIDOR\n");
                 return 1;
                 }
         if(f == 3) {
@@ -110,94 +136,150 @@ int convent_arg(FILE* f1,FILE* f2) {
                 fwrite(&par,sizeof(int),1,f2);
                 }
         if(!strcmp(arg,"")) {
-                fprintf(stderr,"Please,give me adress%s\n",arg);
+                fprintf(stderr,"Please,give me some argument%s\n",arg);
                 return 0;
                 }
-        }
-/*	fclose(f1);
-        fclose(f2); */
+      
 }
 
 unsigned int conventer(FILE* f1,FILE* f2) {
 	
 	char k ;
-	char* s;  
-      	s = (char*)calloc(F_MAXLINE,sizeof(char));
-	
+	char* process;  
+      	process = (char*)calloc(F_MAXLINE,sizeof(char));
 	int i = 0;
+	int val;
 	k = fgetc(f1);
-	
+ 	printf("We continue to work\n");	
 	fprintf(stderr, "Reading sym %d\n", k);
+
 	while (k && !isspace(k) && k!= EOF) {	
 		if (i >=F_MAXLINE) {
-			fprintf(stderr,"Too long word %s\n",s);
-		} 
-			s[i++] = k;
-			k = fgetc(f1);
+			fprintf(stderr,"Too long word %s\n",process);
+		}
+			process[i++] = k;
+			k = fgetc(f1);	
 			fprintf(stderr, "Reading sym %d\n", k);
 		
 	}	
-	
-	if(!strcmp(s,"PUSH ")) {
+	printf("%p\n\n", f2);
+
+	fprintf(stderr,"WE'RE STARTING TO CONVERT\n");
+	fprintf(stderr,"my process %s\n",process);
+
+	if(process[0] == ':') { 
+		fputs(process,f2);
+	} else 
+	if(!strcmp(process,"PUSH")) {
 		fputc(PUSH, f2);
-		return convent_arg(f1,f2);
-		fwrite(s,sizeof(char),5,f2);
+		fprintf(stderr,"We try to convert\n");
+		convent_arg(f1,f2);
+		
 		printf("we continue\n");
-	} else  if (!strcmp(s,"POP ")) {
+	} else  if (!strcmp(process,"POP")) {
 			fputc(POP,f2);
 			return convent_arg(f1,f2);
 
-	} else  if(!strcmp(s,"ADD")) {
+	} else  if(!strcmp(process,"ADD")) {
 			fputc(ADD,f2);
+			printf("HEllo\n");
 			return 1;
 		
 
-	} else 	if(!strcmp(s,"SUB")) {
+	} else 	if(!strcmp(process,"SUB")) {
 			fputc(SUB,f2);
+			return 1;
+	
+	 } else if(!strcmp(process,"JMP")) {
+                        fputc(JMP,f2);
+               //         return convert_arg(f1,f2);
+
+	
+	} else if(!strcmp(process,"JA")) {
+			fputc(JA,f2);
+//			return convert_arg(f1,f2);
+	
+	} else if(!strcmp(process,"JAE")) {                                                     
+                        fputc(JAE,f2);                                                          
+  //                      return convert_arg(f1,f2);  
+	
+	} else if(!strcmp(process,"JB")) {                                                     
+                        fputc(JB,f2);                                                          
+    //                    return convert_arg(f1,f2);  
+	
+	} else if(!strcmp(process,"JBE")) {                                                     
+                        fputc(JBE,f2);                                                          
+      //                  return convert_arg(f1,f2);  
+
+	} else if(!strcmp(process,"JE")) {                                                     
+                        fputc(JE,f2);                                                          
+        //                return convert_arg(f1,f2);  
+	
+	} else if(!strcmp(process,"JHE")) {  
+                                               
+                        fputc(JHE,f2);                                                          
+          //              return convert_arg(f1,f2); 
+	
+	} else if(!strcmp(process,"CALL")) {                                                     
+                        fputc(CALL,f2);                                                          
+            //            return convert_arg(f1,f2);   	
+	
+	} else if(!strcmp(process,"RET")) {                                                     
+                        fputc(RET,f2);                                                         
 			return 1;
 					
 		
-	} else if(!strcmp(s,"MUL")) {
-			fputc(MUL,f2);
+	} else if(!strcmp(process,"mul")) {
+			fputc(mul,f2);
 			return 1;
 		
 
-	} else if(!strcmp(s,"DIV")) {
+	} else if(!strcmp(process,"DIV")) {
 			fputc(DIV,f2);
 			return 1;
 	
 		
-	} else if(!strcmp(s,"OUT")) {
+	} else if(!strcmp(process,"OUT")) {
 			fputc(OUT,f2);
 			return 1;
 		
 
-	} else 	if(!strcmp(s,"IN")) {
+	} else 	if(!strcmp(process,"IN")) {
 			fputc(IN,f2);
 			return 1;
 		
 
-	} else if(!strcmp(s,"POPAX")) {
+	} else if(!strcmp(process,"POPAX")) {
 			fputc(POPAX,f2);
 			return convent_arg(f1,f2);
 		
 
-	} else if(!strcmp(s,"PUSHAX")) {
+	} else if(!strcmp(process,"PUSHAX")) {
 			fputc(PUSHAX,f2);
 			return convent_arg(f1,f2);
 		
+	
+        } else if(!strcmp(process,"NOCOMMAND")) {
+                        fputc(NOCOMMAND,f2);
+                        return 1;
 
 		
-	} else if(!strcmp(s,"")) {
+	} else if(!strcmp(process,"")) {
 			fprintf(stdout,"That's all\n");
 			return 0;
 			}
-	
+	else {
+		fprintf(stderr,"UNKNOWN PROCESS%s\n",process);
+		return 0;
+	}
 		
-		
-  	fclose(f1);
-	fclose(f2); 
+
 }						
+
+/*void table_create(FILE* f_in,FILE* f_out,table* t) {
+	t = (table*)malloc(sizeof(table)*50);
+	char value;
+*/	
 
 int main(int argc, char **argv) {
 	FILE* f1 = NULL;
@@ -225,19 +307,20 @@ int main(int argc, char **argv) {
 	}
 	
 	f1 = fopen(name_in,"r");
-	f2 = fopen(name_out,"wb+");	
-	printf("%p\n%s\n", f1, name_in);
+	f2 = fopen(name_out,"w+");	
+	printf("%p\n%s\n", f2, name_out);
 
 	
 	printf("%d\n",f);
 	
 	while(f){
-		
+		printf("all ok\n");		
 		f = conventer(f1, f2);
 		
 	}
+	
 	fclose(f1);
-//	fclose(f2);
+	fclose(f2);
 	return 0;
 }
 
