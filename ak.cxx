@@ -89,7 +89,7 @@ void Node :: akinator(Node* root) {
 	}	
 }
 int main(int argc,char** argv) {
-        FILE* f_in = fopen("tree_save.txt","rw+");	
+        FILE* f_in = fopen("tree_save.txt","r");	
 	char*name_in = "tree_save.txt";
         switch(argc-1) {
                 case 1 :
@@ -101,6 +101,7 @@ int main(int argc,char** argv) {
 }
 	Node* node = node->create_tree(f_in);
 	node->akinator(node);
+	f_in = fopen("tree_save.txt","w");
 	node->print_tree(f_in,node);
         return 0;
 }
