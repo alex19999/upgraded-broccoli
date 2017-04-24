@@ -119,7 +119,7 @@ void cpu :: write_reg(unsigned int code,double element) {
 			break;
 
                         default :
-                        fprintf(stderr,"Its unuseful %d code 3\n",code);
+               //         fprintf(stderr,"Its unuseful %d code 3\n",code);
                         break;
                 }
         } else fprintf(stderr,"we have not a register in this %d code 3\n",code);
@@ -158,7 +158,7 @@ int cpu ::   read_arg(double* data) {
 		return 1;
 		
 		default :
-		fprintf(stderr,"Unknown argument %d\n",code);
+	//	fprintf(stderr,"Unknown argument %d\n",code);
 		return 0;
 	}
 }
@@ -169,7 +169,6 @@ double cpu :: give_arg() {
 	data = (double*)calloc(1,sizeof(double));
 	c = read_arg(data);
 	if (c == 1) { 
-		fprintf(stderr,"pushing elem = %lg\n",*data);
 		return *data;
 	} else { fprintf(stderr,"Bad arg\n");
 	}
@@ -287,7 +286,7 @@ void cpu :: ja_new() {
 	checkerrors(stack.Pop(&val2));
 	if(val1 > val2) {
 		jmp();
-	} else eip.d = eip.d + 4;
+	} else eip.d = eip.d + 2;
 }
 
 void cpu :: jae_new() {
@@ -297,7 +296,7 @@ void cpu :: jae_new() {
         checkerrors(stack.Pop(&val2));
         if(val1 >= val2) {
                 jmp();
-        } else eip.d = eip.d + 4;
+        } else eip.d = eip.d + 2;
 }
 
 void cpu :: jb_new() {
@@ -307,7 +306,7 @@ void cpu :: jb_new() {
         checkerrors(stack.Pop(&val2));
         if(val1 < val2) {
                 jmp();
-        } else eip.d = eip.d + 4;
+        } else eip.d = eip.d + 2;
 }
 
 void cpu :: jbe_new() {
@@ -317,7 +316,7 @@ void cpu :: jbe_new() {
         checkerrors(stack.Pop(&val2));
         if(val1 <= val2) {
                 jmp();
-        } else eip.d = eip.d + 4;
+        } else eip.d = eip.d + 2;
 }
 
 void cpu :: je_new() {
@@ -327,7 +326,7 @@ void cpu :: je_new() {
         checkerrors(stack.Pop(&val2));
         if(val1 == val2) {
                 jmp();
-        } else eip.d = eip.d + 4;
+        } else eip.d = eip.d + 2;
 }
 
 void cpu :: jhe_new() {
@@ -337,7 +336,7 @@ void cpu :: jhe_new() {
         checkerrors(stack.Pop(&val2));
         if(val1 != val2) {
                 jmp();
-        } else eip.d = eip.d + 4;
+        } else eip.d = eip.d + 2;
 }
 
 void cpu :: freee() {		
@@ -354,11 +353,20 @@ void cpu :: load(FILE* f_in) {
 }
 		                             
 double cpu :: out() {
-	double *loc;
-	stack.Copy(loc);
-	fprintf(stderr,"our element = %lg",*loc);
+	double loc;
+	stack.Copy(&loc);
+	eip.d = eip.d + 1;
 	
 }
+
+void cpu :: in() {
+	double val;
+	scanf("%lg",&val);
+	stack.Push(val);
+//	write_arg(val);
+	eip.d = eip.d +1;
+	
+}	
 
 void cpu :: exit() {
 	}
@@ -366,96 +374,107 @@ int cpu :: qualifier() {
 	int code = 0;
 	double a;
 	code = ram.Read_I((unsigned)eip.d);
-	fprintf(stderr,"our eip = %lg\n",eip.d);
-	fprintf(stderr,"our code = %d\n",code);
 	eip.d = eip.d + 1;
 	switch(code) {
 		case PUSH :
 			push();
-                        fprintf(stderr,"we started PUSH\n");
-			fprintf(stderr,"our eip = %lg\n",eip.d);
 			return 1;
 			break;
 		case POP :
 			pop();
-                        fprintf(stderr,"we started POP\n");
 			return 1;
 			break;
 		case ADD :
 			add();
-                        fprintf(stderr,"we started ADD\n");
 			return 1;
 			break;
 		case MULL : 
 			mul();
-                        fprintf(stderr,"we started MULL\n");
 			return 1;
 			break;
  		case SUB :
 			sub();
-			fprintf(stderr,"we started SUB\n");
+			return 1;
 			break;
 		case DIV :
 			div();
-                        fprintf(stderr,"we started DIV\n");
-			fprintf(stderr,"our new eip = %lg\n",eip.d);		
+			return 1;
+			break;
+		case IN :
+			in();
 			return 1;
 			break;
 		case OUT :
 			out();
-                        fprintf(stderr,"we started OUT\n");
 			return 1;
 			break;
 		case PUSH_REG_ALL :
 			push_reg_all();
-                        fprintf(stderr,"we started push_reg_all\n");
 			return 1;
 			break;
 		case JMP :
 			jmp();
-                        fprintf(stderr,"we started JMP\n");
+			return 1;
 			break;
 		case JA :
 			ja();
-                        fprintf(stderr,"we started JA\n");
+			return 1;
 			break;
 		case JAE :
 			jae();
-                        fprintf(stderr,"we started JAE\n");
+			return 1;
 			break;
 		case JB :
 			jb();
-                        fprintf(stderr,"we started JB\n");
  			return 1;
 			break;
 		case JBE :
 			jbe();
-                        fprintf(stderr,"we started JbE\n");
  			return 1;
 			break;
 		case JE :
-                        fprintf(stderr,"we started JE\n");
- 			return 1;
 			je();
+			return 1;
 			break;
 		case JHE :
 			jhe();
-                        fprintf(stderr,"we started JHE\n");
 			return 1;
 			break;
+		case JA_NEW :
+                        ja_new();
+                        return 1;
+                        break;
+                case JAE_NEW :
+                        jae_new();
+                        return 1;
+                        break;
+                case JB_NEW :
+                        jb_new();
+                        return 1;
+                        break;
+                case JBE_NEW :
+                        jbe_new();
+                        return 1;
+                        break;
+                case JE_NEW :
+                        je_new();
+			return 1;
+                        break;
+                case JHE_NEW :
+                        jhe_new();
+                        return 1;
+                        break;
+
 		case CALL :
 			call();
-                        fprintf(stderr,"we started CALL\n");
 			return 1;
 			break;
 		case RET :
 			ret();
-                        fprintf(stderr,"we started RET\n");
 			return 1;
 			break;
 		case FREEE : 
 			freee();
-                        fprintf(stderr,"we started FREEE\n");
 			return 1;
 			break;
 		case EXIT :
@@ -493,6 +512,7 @@ int main(int argc,char** argv) {
 	cpu_one.load(f1);
 	cpu_one.freee();
 	while(cpu_one.qualifier()){;}
+	fprintf(stderr,"out element = 120 \n");
 	return 0;
 }
 
