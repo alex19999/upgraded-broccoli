@@ -4,54 +4,9 @@
 #include<cstdio>
 #include<cstring>
 #include<malloc.h>
-
+#include"codes.hxx"
 
 using namespace std;
-
-
-#define F_MAXLINE 9
-#define ARG_MAXLINE 10
-#define RAM_SIZE 256
-#define MAX_OP 256
-#define STACK_SIZE 128
-#define NOCOMMAND 0
-#define PUSH 1
-#define POP 2
-#define ADD 3
-#define MULL 4
-#define SUB 5
-#define DIV 6
-#define OUT 7           
-#define IN 8
-#define POPR 9
-#define PUSHR 10
-#define PUSH_REG_ALL 30
-#define JMP 11                                                                              
-#define JA  12                                                                               
-#define JAE 13                                                                              
-#define JB  14                                                                              
-#define JBE 15                                                                               
-#define JE  17                                                                               
-#define JHE 18                                                                              
-#define CALL 19                                                                              
-#define RET 20       
-#define FREEE 16
-
-#define R_eax 21
-#define R_ebx 22
-#define R_ecx 23
-#define R_edx 24
-#define R_eip 25
-#define R_ebp 26
-#define R_esp 27
-
-#define r_code 1
-#define a_code 2
-#define num_i 3
-#define num_d 4
-#define ra_code 5
-#define in_tr 6 
-#define a_prep 'h' 
 
 typedef struct _table1 {    				// table to collect our lables and their addresses//
         double go;
@@ -71,7 +26,6 @@ double convert_arg(FILE* f1) {				// convertind arguements//
         par = fgetc(f1);
         int val;
         double dval;
-        fprintf(stderr,"START CONVERT\n");
         while(par && !isspace(par) && par != EOF) {
         if(i >= ARG_MAXLINE) {
                 fprintf(stderr,"TOO LONG ARGUMENT%s\n",arg);
@@ -181,37 +135,27 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
 	while(k != EOF) {
 	i = 0;
 	k = fgetc(f1);
-        fprintf(stderr,"We continue to work\n");
-        fprintf(stderr, "Reading sym %d\n", k);
         while (k && !isspace(k) && k!= EOF) {
                 if (i >=F_MAXLINE) {
                         fprintf(stderr,"Too long word %s\n",process);
                 }
                         process[i++] = k;
                         k = fgetc(f1);
-                        fprintf(stderr, "Reading sym = %d\n", k);
         }
 	process[i] = '\0';
 	if(process[0] == ':') {
-		fprintf(stderr,"WE START TO CONVERT LABLE\n");
 		sscanf(&process[1],"%lf",&dval2);
         	t1[t].go = dval2;
 		t1[t].addr = n;
-		fprintf(stderr,"our lable %lg\n",t1[t].go);
 		t++;
-		fprintf(stderr,"our %d\n",n);
         } else if(!strcmp(process,"PUSH")) {
-			fprintf(stderr,"WE START TO CONVERT PUSH\n");
                 	t2->oper[n]  = 1;
 			n++;
                 	t2->oper[n] = convert_arg(f1);
 			n++;
 			t2->oper[n] = convert_arg(f1);
-			fprintf(stderr,"We've converted arg\n");	
 			n++;
-                	fprintf(stderr,"we continue\n");
         } else  if (!strcmp(process,"POP")) {
-			fprintf(stderr,"WE START TO CONVERT POP\n");
                         t2->oper[n] = 2;
 			n++;
                         t2->oper[n] = convert_arg(f1);
@@ -219,16 +163,13 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
 			t2->oper[n] = convert_arg(f1);
 			n++;
         } else  if(!strcmp(process,"ADD")) {
-                        fprintf(stderr,"WE START TO CONVERT ADD\n");
 			t2->oper[n] = 3;
 			n++;
         } else  if(!strcmp(process,"SUB")) {
-			fprintf(stderr,"WE START TO CONVERT SUB\n");
                         t2->oper[n] = 5;
 			n++;
 
          } else if(!strcmp(process,"JMP")) {
-			fprintf(stderr,"WE START TO CONVERT JMP\n");
                         t2->oper[n] = 11;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -250,16 +191,13 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
 				
 
         } else if(!strcmp(process,"JA")) {
-			fprintf(stderr,"WE START TO CONVERT JA\n");
                         t2->oper[n] = 12;
 			n++;
 			t2->oper[n] = convert_arg(f1);
                         n++;
                         dval1 = convert_arg(f1);
-			fprintf(stderr,"our arg of jmp %lf\n",dval1);
                         int c = 0;
                         for(m = 0;m <= t;m++){
-				fprintf(stderr,"our lable %lf\n",t1[t].go);
                                 if(t1[m].go == dval1) {
                                         t2->oper[n] = t1[m].addr;
                                         n++;
@@ -273,7 +211,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                         }
 
         } else if(!strcmp(process,"JAE")) {
-			fprintf(stderr,"WE START TO CONVERT JAE\n");
                         t2->oper[n] = 13;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -293,7 +230,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                                 n++;
                         }
 	} else if(!strcmp(process,"JB")){
-			fprintf(stderr,"WE START TO CONVERT JB\n");
         		t2->oper[n] = 14;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -314,7 +250,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                         }
 
 	} else if(!strcmp(process,"JBE")) {
-			fprintf(stderr,"WE START TO CONVERT JBE\n");
                         t2->oper[n] = 15;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -335,7 +270,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                         }
 
         } else if(!strcmp(process,"JE")) {
-			fprintf(stderr,"WE START TO CONVERT JE\n");
                         t2->oper[n] = 17;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -356,7 +290,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                         }
 
         } else  if(!strcmp(process,"JHE")) {
-			fprintf(stderr,"WE START TO CONVERT JHE\n");
 			t2->oper[n] = 18;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -377,7 +310,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                         }
 
         } else if(!strcmp(process,"CALL")) {
-			fprintf(stderr,"WE START TO CONVERT CALL\n");
                         t2->oper[n] = 19;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -398,27 +330,25 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
                         }
 
         } else if(!strcmp(process,"RET")) {
-			fprintf(stderr,"WE START TO CONVERT RET\n");
                         t2->oper[n] = 20;
 			n++;
         } else if(!strcmp(process,"MULL")) {
-			fprintf(stderr,"WE START TO CONVERT MUL\n");
                         t2->oper[n] = 4;
 			n++;
         } else if(!strcmp(process,"DIV")) {
-			fprintf(stderr,"WE START TO CONVERT DIV\n");
                         t2->oper[n] = 6;
 			n++;
         } else if(!strcmp(process,"OUT")) {
-			fprintf(stderr,"WE START TO CONVERT OUT\n");
                         t2->oper[n] = 7;
 			n++;
         } else  if(!strcmp(process,"IN")) {
-			fprintf(stderr,"WE START TO CONVERT IN\n");
                         t2->oper[n] = 8;
 			n++;
+//			t2->oper[n] =convert_arg(f1);
+//			n++;
+	//		t2->oper[n] = convert_arg(f1);
+	//		n++;
         } else if(!strcmp(process,"POPR")) {
-			fprintf(stderr,"WE START TO CONVERT POPR\n");
                         t2->oper[n] = 9;
 			n++;
 			t2->oper[n] = convert_arg(f1);
@@ -426,7 +356,6 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
 			t2->oper[n] = convert_arg(f1);
 			n++;
         } else if(!strcmp(process,"PUSHR")) {
-			fprintf(stderr,"WE START TO CONVERT PUSHR\n");
                         t2->oper[n] = 10;
 			n++;
                         t2->oper[n] = convert_arg(f1);
@@ -434,8 +363,7 @@ int create_table(FILE* f1,table1* t1,table2* t2) {	// create table of our progra
 			t2->oper[n] = convert_arg(f1);
 			n++;
 			
-        } else if(!strcmp(process,"NOCOMMAND")) {
-			fprintf(stderr,"WE START TO CONVERT NOCOMMAND\n");
+        } else if(!strcmp(process,"EXIT")) {
                         t2->oper[n] = 0;
 			n++;
                      

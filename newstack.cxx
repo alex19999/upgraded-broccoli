@@ -14,24 +14,20 @@ unsigned int NewStack :: Push(double val){
 
         }  else {
                 return 0;
-                printf("ram->size_=%u\nmaxsize=%d\nesp->d=%lg\n",ram->size_, maxsize_, esp->d);
                 }
         return 5;
 }
 unsigned int NewStack :: Pop(double* loc){
         if (esp->d <= ram->size_- 1) {
                 *loc = ram->Read_D((unsigned)esp->d);
-                 fprintf(stderr,"popping  elem = %lg\n",*loc);
                 }
         esp->d = esp->d - 1;
-        fprintf(stderr,"popping  elem = %lg\n",*loc);
         return 0;
 }
 
 unsigned int NewStack :: Copy(double* loc){
         if (esp->d <= ram->size_ - 1){
                 *loc = ram->Read_D((unsigned)esp->d);
-                fprintf(stderr,"our copying element\n");
                 }
 
         return 0;

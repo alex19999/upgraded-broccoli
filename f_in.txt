@@ -1,23 +1,24 @@
-PUSH num_d 10
+IN
 POP r_code R_eax
-PUSH r_code R_eax
+PUSH num_d 1
+POP r_code R_ebx
+PUSH r_code R_ebx
+PUSH r_code R_ecx
+:1
+POP in_tr in_tr
+PUSH r_code R_ebx
+PUSH r_code R_ecx
+ADD
+PUSH r_code R_ecx
+POP r_code R_ebx
 POP r_code R_ecx
 PUSH num_d 1
 PUSH r_code R_eax
 SUB
 POP r_code R_eax
 PUSH r_code R_eax
-PUSH r_code R_ecx
-:1
-MULL
-POP r_code R_ebx
-PUSH num_d 1
-PUSH r_code R_eax
-SUB
-POP r_code R_eax
-PUSH r_code R_ebx
-PUSH r_code R_eax
 JA num_d *1
-POP in_tr in_tr
+PUSH r_code R_ecx
+OUT
 EXIT
 
