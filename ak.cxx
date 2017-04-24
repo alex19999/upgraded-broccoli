@@ -27,7 +27,6 @@ Node* Node :: create_tree(FILE* f_in) {
 		assert(fgetc(f_in) == ')'); 
 		return NULL;
 	}
-	fprintf(stderr,"our data = %s\n",data);
 	Node* root = new Node(data,NULL,NULL);
 	root->left = create_tree(f_in);
 	root->right = create_tree(f_in);
@@ -60,22 +59,25 @@ void Node :: print_tree(FILE* f_out,Node* root) {
 void Node :: akinator(Node* root) {
 	char* answer;
 	char* data;
-	int len = 0;
+	int len_d = 0;
+	int len_a = 0;
 	look(root);
 	data = (char*)calloc(MAX_SYM,sizeof(char));
 	answer = (char*)calloc(MAX_PREP,sizeof(char));
 	fscanf(stdin,"%s",answer);
-	if(!strcmp(answer,"no")) {
+	if(!strcmp(answer,"нет")) {
 		if(root->left != NULL) {
 			akinator(root->left);
 		} else {
-			fprintf(stderr,"Who is it?\n");
+			fprintf(stderr,"Кто это?\n");
                         fscanf(stdin,"%s",answer);
-                        fprintf(stderr,"What does  %s differs from %s\n",answer,root->question);
+			len_a = strlen(answer);
+                        fprintf(stderr,"Чем  %s отличается от %s\n",answer,root->question);
                         getc(stdin);
                         fgets(data,MAX_SYM,stdin);
-                        len = strlen(data);
-                        data[len-1] = '?';
+                        len_d = strlen(data);
+                        data[len_d-1] = '?';
+			answer[len_a] = '?';
                         root->left = new Node(root->question,NULL,NULL);
                         root->right = new Node(answer,NULL,NULL);
                         root->question = data;
