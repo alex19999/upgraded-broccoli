@@ -65,7 +65,7 @@ void Node :: akinator(Node* root) {
 	data = (char*)calloc(MAX_SYM,sizeof(char));
 	answer = (char*)calloc(MAX_PREP,sizeof(char));
 	fscanf(stdin,"%s",answer);
-	if(!strcmp(answer,"нет")) {
+	if(!strcmp(answer,"нет")){
 		if(root->left != NULL) {
 			akinator(root->left);
 		} else {
@@ -82,14 +82,19 @@ void Node :: akinator(Node* root) {
                         root->right = new Node(answer,NULL,NULL);
                         root->question = data;
 		 	}	
-	} else {
+	} 
+	if(!strcmp(answer,"да")) {
 		if(root->right != NULL) {
 			akinator(root->right);
 		} else {
-			fprintf(stderr,"All right\n");
+			fprintf(stderr,"Спасибо за игру\n");
 		}	
-	}	
-}
+	} else {
+		fprintf(stderr,"Пожалуйста,для ответов используйте слова да или нет\n");
+		akinator(root);
+	}
+}	
+
 int main(int argc,char** argv) {
         FILE* f_in = fopen("tree_save.txt","r");	
 	char*name_in = "tree_save.txt";
