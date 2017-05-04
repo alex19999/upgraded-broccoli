@@ -65,6 +65,10 @@ void Node :: akinator(Node* root) {
 	data = (char*)calloc(MAX_SYM,sizeof(char));
 	answer = (char*)calloc(MAX_PREP,sizeof(char));
 	fscanf(stdin,"%s",answer);
+	if(strcmp(answer,"да") && strcmp(answer,"нет")) {
+		fprintf(stderr,"Используйте только да или нет\n");
+		akinator(root);
+	}
 	if(!strcmp(answer,"нет")){
 		if(root->left != NULL) {
 			akinator(root->left);
@@ -81,6 +85,7 @@ void Node :: akinator(Node* root) {
                         root->left = new Node(root->question,NULL,NULL);
                         root->right = new Node(answer,NULL,NULL);
                         root->question = data;
+			return;
 		 	}	
 	} 
 	if(!strcmp(answer,"да")) {
@@ -89,10 +94,8 @@ void Node :: akinator(Node* root) {
 		} else {
 			fprintf(stderr,"Спасибо за игру\n");
 		}	
-	} else {
-		fprintf(stderr,"Пожалуйста,для ответов используйте слова да или нет\n");
-		akinator(root);
-	}
+	
+	} 
 }	
 
 int main(int argc,char** argv) {
